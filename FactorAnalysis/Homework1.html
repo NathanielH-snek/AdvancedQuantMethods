@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>790Q Assignment 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Homework1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Homework1_files/libs/quarto-html/quarto.js"></script>
+<script src="Homework1_files/libs/quarto-html/popper.min.js"></script>
+<script src="Homework1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Homework1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Homework1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Homework1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Homework1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Homework1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Homework1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">790Q Assignment 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>anes_raw <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">'~/Documents/School/790Q/Homeworks/Data/anes_panel_2013_inetrecontact.dta'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>anes <span class="ot">&lt;-</span> anes_raw <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(C5_T1, C5_T2, C5_T3, C5_T4, C5_U1, C5_U2, C5_U3, C5_U4, C5_U5), <span class="sc">~</span> <span class="fu">ifelse</span>(. <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, .)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>anes_soc_dom <span class="ot">&lt;-</span> anes <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    C5_T1,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    C5_T2,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    C5_T3,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    C5_T4</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>anes_rwa <span class="ot">&lt;-</span> anes <span class="sc">%&gt;%</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    C5_U1,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    C5_U2,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    C5_U3,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    C5_U4,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    C5_U5</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flip_scale <span class="ot">&lt;-</span> <span class="cf">function</span>(column) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  max_val <span class="ot">=</span> <span class="fu">max</span>(column, <span class="at">na.rm =</span> T)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  add <span class="ot">=</span> max_val <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(column<span class="sc">*-</span><span class="dv">1</span> <span class="sc">+</span> add)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Test function</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">flip_scale</span>(anes_soc_dom<span class="sc">$</span>C5_T1)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">CrossTable</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  anes_soc_dom<span class="sc">$</span>C5_T1, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  test, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">expected =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">chisq=</span><span class="cn">FALSE</span>,  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop.c=</span><span class="cn">TRUE</span>, </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop.r=</span><span class="cn">FALSE</span>, </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop.t=</span><span class="cn">FALSE</span>, </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop.chisq =</span> <span class="cn">FALSE</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Cell Contents 
+|-------------------------|
+|                       N | 
+|           N / Col Total | 
+|-------------------------|
+
+===================================================================
+                      test
+anes_soc_dom$C5_T1        1       2       3       4       5   Total
+-------------------------------------------------------------------
+1                         0       0       0       0      75      75
+                          0       0       0       0       1        
+-------------------------------------------------------------------
+2                         0       0       0     177       0     177
+                          0       0       0       1       0        
+-------------------------------------------------------------------
+3                         0       0     681       0       0     681
+                          0       0       1       0       0        
+-------------------------------------------------------------------
+4                         0     202       0       0       0     202
+                          0       1       0       0       0        
+-------------------------------------------------------------------
+5                       418       0       0       0       0     418
+                          1       0       0       0       0        
+-------------------------------------------------------------------
+Total                   418     202     681     177      75    1553
+                      0.269   0.130   0.439   0.114   0.048        
+===================================================================</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>anes_soc_dom <span class="ot">&lt;-</span> anes_soc_dom <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(C5_T1, C5_T2), flip_scale))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>anes_rwa <span class="ot">&lt;-</span> anes_rwa <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(C5_U3, C5_U4, C5_U5), flip_scale))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>soc_dom_alpha <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">alpha</span>(anes_soc_dom, <span class="at">na.rm =</span> <span class="cn">TRUE</span>,  <span class="at">check.keys=</span><span class="cn">TRUE</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>soc_dom_alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: psych::alpha(x = anes_soc_dom, na.rm = TRUE, check.keys = TRUE)
+
+  raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
+      0.63      0.63    0.67       0.3 1.7 0.016  2.6 0.79      0.2
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt     0.60  0.63  0.65
+Duhachek  0.59  0.63  0.66
+
+ Reliability if an item is dropped:
+      raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+C5_T1      0.63      0.62    0.60      0.35 1.6    0.015 0.074  0.23
+C5_T2      0.55      0.54    0.55      0.29 1.2    0.019 0.108  0.11
+C5_T3      0.48      0.51    0.47      0.26 1.0    0.023 0.058  0.16
+C5_T4      0.54      0.55    0.51      0.29 1.2    0.020 0.047  0.23
+
+ Item statistics 
+         n raw.r std.r r.cor r.drop mean  sd
+C5_T1 1553  0.60  0.63  0.45   0.29  2.5 1.1
+C5_T2 1556  0.66  0.70  0.55   0.42  2.2 1.0
+C5_T3 1553  0.75  0.73  0.65   0.50  2.8 1.2
+C5_T4 1555  0.73  0.69  0.60   0.43  2.8 1.3
+
+Non missing response frequency for each item
+         1    2    3    4    5 miss
+C5_T1 0.27 0.13 0.44 0.11 0.05 0.05
+C5_T2 0.33 0.20 0.39 0.06 0.01 0.05
+C5_T3 0.15 0.25 0.36 0.14 0.09 0.05
+C5_T4 0.17 0.29 0.23 0.16 0.15 0.05</code></pre>
+</div>
+</div>
+<p>For the scale related to social dominance we see a reported alpha of 0.63. This is lower than the .7 value of the Kaiser Criterion indicating this measure is generally not reliable. It looks like question T1 is the least effective, as dropping it would decrease the alpha only slightly (0.62) whereas removing any of the other questions would reduce the alpha in a substantively significant (resulting in a 0.55 - 0.51 alpha) amount. Since removing any of the question would reduce the alpha score however all should be kept in regards to this current interation and perhaps more should be added or the questions should be reworked.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rwa_alpha <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">alpha</span>(anes_rwa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>,  <span class="at">check.keys=</span><span class="cn">TRUE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rwa_alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: psych::alpha(x = anes_rwa, na.rm = TRUE, check.keys = TRUE)
+
+  raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
+      0.72      0.72    0.73      0.34 2.6 0.011  2.8 0.82     0.26
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt      0.7  0.72  0.74
+Duhachek   0.7  0.72  0.74
+
+ Reliability if an item is dropped:
+      raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+C5_U1      0.75      0.74    0.72      0.41 2.8    0.010 0.040  0.42
+C5_U2      0.71      0.70    0.69      0.37 2.4    0.012 0.059  0.37
+C5_U3      0.64      0.64    0.64      0.31 1.8    0.015 0.033  0.24
+C5_U4      0.64      0.64    0.63      0.31 1.8    0.015 0.027  0.26
+C5_U5      0.63      0.63    0.64      0.30 1.7    0.015 0.044  0.21
+
+ Item statistics 
+         n raw.r std.r r.cor r.drop mean  sd
+C5_U1 1556  0.55  0.56  0.39   0.29  2.3 1.2
+C5_U2 1553  0.61  0.63  0.49   0.40  2.4 1.1
+C5_U3 1553  0.75  0.74  0.68   0.57  2.9 1.2
+C5_U4 1548  0.76  0.74  0.69   0.57  3.1 1.3
+C5_U5 1554  0.77  0.76  0.69   0.60  3.3 1.2
+
+Non missing response frequency for each item
+         1    2    3    4    5 miss
+C5_U1 0.30 0.37 0.18 0.09 0.07 0.05
+C5_U2 0.19 0.38 0.27 0.10 0.05 0.05
+C5_U3 0.17 0.21 0.30 0.23 0.09 0.05
+C5_U4 0.16 0.14 0.30 0.24 0.16 0.05
+C5_U5 0.10 0.16 0.26 0.32 0.17 0.05</code></pre>
+</div>
+</div>
+<p>The resulting alpha form the right wing authoritarianism scale does result in a reliable alpha score of 0.72. Interestingly removing the question U1 would result in an increase of the alpha score to 0.73. This may indicate that this question should be removed. Other question removals would reduce the alpha score substantially particularly U5 (0.63) U4 and U3 (0.64 respectively). Notably the three questions that appear to be the most critical to the reliability of this scale are all reverse coded.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>combined_df <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(anes_rwa, anes_soc_dom)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>paf_results <span class="ot">&lt;-</span> <span class="fu">fa</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  combined_df,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfactors =</span> <span class="dv">2</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">rotate =</span> <span class="st">"oblimin"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">fm=</span><span class="st">"pa"</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required namespace: GPArotation</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>paf_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Factor Analysis using method =  pa
+Call: fa(r = combined_df, nfactors = 2, rotate = "oblimin", fm = "pa")
+Standardized loadings (pattern matrix) based upon correlation matrix
+        PA1   PA2    h2   u2 com
+C5_U1  0.19  0.22 0.097 0.90 2.0
+C5_U2  0.26  0.32 0.200 0.80 1.9
+C5_U3  0.79 -0.08 0.610 0.39 1.0
+C5_U4  0.77 -0.05 0.582 0.42 1.0
+C5_U5  0.68  0.13 0.508 0.49 1.1
+C5_T1  0.63  0.01 0.402 0.60 1.0
+C5_T2  0.46  0.14 0.257 0.74 1.2
+C5_T3  0.00  0.81 0.651 0.35 1.0
+C5_T4 -0.01  0.78 0.611 0.39 1.0
+
+                       PA1  PA2
+SS loadings           2.42 1.49
+Proportion Var        0.27 0.17
+Cumulative Var        0.27 0.44
+Proportion Explained  0.62 0.38
+Cumulative Proportion 0.62 1.00
+
+ With factor correlations of 
+     PA1  PA2
+PA1 1.00 0.19
+PA2 0.19 1.00
+
+Mean item complexity =  1.2
+Test of the hypothesis that 2 factors are sufficient.
+
+df null model =  36  with the objective function =  2.77 with Chi Square =  4519.61
+df of  the model are 19  and the objective function was  0.4 
+
+The root mean square of the residuals (RMSR) is  0.08 
+The df corrected root mean square of the residuals is  0.11 
+
+The harmonic n.obs is  1549 with the empirical chi square  651.61  with prob &lt;  6.3e-126 
+The total n.obs was  1635  with Likelihood Chi Square =  659.1  with prob &lt;  1.6e-127 
+
+Tucker Lewis Index of factoring reliability =  0.729
+RMSEA index =  0.144  and the 90 % confidence intervals are  0.134 0.153
+BIC =  518.51
+Fit based upon off diagonal values = 0.94
+Measures of factor score adequacy             
+                                                   PA1  PA2
+Correlation of (regression) scores with factors   0.91 0.89
+Multiple R square of scores with factors          0.83 0.79
+Minimum correlation of possible factor scores     0.67 0.57</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>paf_results<span class="sc">$</span>loadings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Loadings:
+      PA1    PA2   
+C5_U1  0.186  0.218
+C5_U2  0.258  0.319
+C5_U3  0.792       
+C5_U4  0.770       
+C5_U5  0.678  0.126
+C5_T1  0.631       
+C5_T2  0.460  0.143
+C5_T3         0.807
+C5_T4         0.784
+
+                 PA1   PA2
+SS loadings    2.391 1.461
+Proportion Var 0.266 0.162
+Cumulative Var 0.266 0.428</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glue</span>(<span class="st">"2 Factor Tucker-Lewis Index: {paf_results$TLI}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2 Factor Tucker-Lewis Index: 0.729274818571758</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glue</span>(<span class="st">"2 Factor Root Mean Square Error of Approximation: {paf_results$RMSEA['RMSEA']}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2 Factor Root Mean Square Error of Approximation: 0.143543943139203</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.diagram</span>(paf_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here I’ve elected to use PAF with oblique rotation. I think finding latent factors is a better choice here than dimension reduction, particularly since the social dominance scale doesn’t appear to be very reliable. For rotation I’ve elected to use oblique since if we really are measuring two factors, I would expect right wing authoritarianism and social dominance to be correlated. Using the provided parameter of 2 factors to start there is an interesting mix of questions of the two scales on loading to each factor. Notably C5_U1, C5_U2, and C5_T2 all have fairly low loading and the Tucker-Lewis Index (TLI) and Root Mean Square Error of Approximation (RMSEA) are both well below the desired thresholds of &gt;0.95 and &gt;0.5 respectively.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scree</span>(combined_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>After plotting a scree plot 3 or 4 factors may be ideal. Let’s try 3 factors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>combined_df <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(anes_rwa, anes_soc_dom)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(combined_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"lifestyle"</span>, <span class="co">#C5_U1</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"freethinking"</span>, <span class="co">#C5_U2</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"obedience"</span>, <span class="co">#C5_U3</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"strongleader"</span>, <span class="co">#C5_U4</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tradition"</span>, <span class="co">#C5_U5</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"socialstagnation"</span>, <span class="co">#C5_T1</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"groupexclusion"</span>, <span class="co">#C5_T2</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"equalityideal"</span>, <span class="co">#C5_T3</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"equalityaction"</span> <span class="co">#C5_T4</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>paf_results2 <span class="ot">&lt;-</span> <span class="fu">fa</span>(</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  combined_df,</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfactors =</span> <span class="dv">3</span>,</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rotate =</span> <span class="st">"oblimin"</span>,</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">fm=</span><span class="st">"pa"</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>paf_results2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Factor Analysis using method =  pa
+Call: fa(r = combined_df, nfactors = 3, rotate = "oblimin", fm = "pa")
+Standardized loadings (pattern matrix) based upon correlation matrix
+                   PA1   PA2   PA3   h2   u2 com
+lifestyle        -0.01 -0.04  0.61 0.35 0.65 1.0
+freethinking      0.02  0.04  0.77 0.62 0.38 1.0
+obedience         0.78 -0.08  0.02 0.61 0.39 1.0
+strongleader      0.77 -0.04  0.00 0.58 0.42 1.0
+tradition         0.64  0.08  0.11 0.50 0.50 1.1
+socialstagnation  0.66  0.05 -0.07 0.43 0.57 1.0
+groupexclusion    0.50  0.19 -0.09 0.29 0.71 1.4
+equalityideal     0.00  0.88 -0.01 0.78 0.22 1.0
+equalityaction   -0.01  0.74  0.04 0.56 0.44 1.0
+
+                       PA1  PA2  PA3
+SS loadings           2.32 1.40 1.00
+Proportion Var        0.26 0.16 0.11
+Cumulative Var        0.26 0.41 0.52
+Proportion Explained  0.49 0.30 0.21
+Cumulative Proportion 0.49 0.79 1.00
+
+ With factor correlations of 
+     PA1  PA2  PA3
+PA1 1.00 0.18 0.34
+PA2 0.18 1.00 0.33
+PA3 0.34 0.33 1.00
+
+Mean item complexity =  1.1
+Test of the hypothesis that 3 factors are sufficient.
+
+df null model =  36  with the objective function =  2.77 with Chi Square =  4519.61
+df of  the model are 12  and the objective function was  0.19 
+
+The root mean square of the residuals (RMSR) is  0.04 
+The df corrected root mean square of the residuals is  0.08 
+
+The harmonic n.obs is  1549 with the empirical chi square  212.54  with prob &lt;  8.4e-39 
+The total n.obs was  1635  with Likelihood Chi Square =  312.45  with prob &lt;  1.1e-59 
+
+Tucker Lewis Index of factoring reliability =  0.799
+RMSEA index =  0.124  and the 90 % confidence intervals are  0.112 0.136
+BIC =  223.66
+Fit based upon off diagonal values = 0.98
+Measures of factor score adequacy             
+                                                   PA1  PA2  PA3
+Correlation of (regression) scores with factors   0.91 0.91 0.84
+Multiple R square of scores with factors          0.83 0.83 0.71
+Minimum correlation of possible factor scores     0.67 0.66 0.41</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>paf_results2<span class="sc">$</span>loadings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Loadings:
+                 PA1    PA2    PA3   
+lifestyle                       0.612
+freethinking                    0.770
+obedience         0.781              
+strongleader      0.770              
+tradition         0.638         0.114
+socialstagnation  0.662              
+groupexclusion    0.501  0.194       
+equalityideal            0.883       
+equalityaction           0.738       
+
+                 PA1   PA2   PA3
+SS loadings    2.299 1.382 0.995
+Proportion Var 0.255 0.154 0.111
+Cumulative Var 0.255 0.409 0.520</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>2 Factor Tucker-Lewis Index: 0.798716117594781</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2 Factor Root Mean Square Error of Approximation: 0.123746827438584</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.diagram</span>(paf_results2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Not every appealing results likely 4 factors will be ideal.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>paf_results3 <span class="ot">&lt;-</span> <span class="fu">fa</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  combined_df,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">nfactors =</span> <span class="dv">4</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rotate =</span> <span class="st">"oblimin"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fm=</span><span class="st">"pa"</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>paf_results3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Factor Analysis using method =  pa
+Call: fa(r = combined_df, nfactors = 4, rotate = "oblimin", fm = "pa")
+Standardized loadings (pattern matrix) based upon correlation matrix
+                   PA1   PA2   PA4   PA3   h2   u2 com
+lifestyle        -0.04 -0.06  0.01  0.68 0.43 0.57 1.0
+freethinking      0.04  0.06 -0.01  0.70 0.55 0.45 1.0
+obedience         0.71 -0.06  0.11  0.02 0.60 0.40 1.1
+strongleader      0.85  0.00 -0.02 -0.04 0.68 0.32 1.0
+tradition         0.68  0.11  0.00  0.09 0.54 0.46 1.1
+socialstagnation  0.15 -0.07  0.68  0.02 0.59 0.41 1.1
+groupexclusion   -0.06  0.08  0.74 -0.01 0.53 0.47 1.0
+equalityideal    -0.04  0.80  0.07  0.02 0.67 0.33 1.0
+equalityaction    0.05  0.82 -0.05  0.00 0.67 0.33 1.0
+
+                       PA1  PA2  PA4  PA3
+SS loadings           1.80 1.37 1.10 1.00
+Proportion Var        0.20 0.15 0.12 0.11
+Cumulative Var        0.20 0.35 0.47 0.58
+Proportion Explained  0.34 0.26 0.21 0.19
+Cumulative Proportion 0.34 0.60 0.81 1.00
+
+ With factor correlations of 
+     PA1  PA2  PA4  PA3
+PA1 1.00 0.14 0.59 0.33
+PA2 0.14 1.00 0.21 0.33
+PA4 0.59 0.21 1.00 0.23
+PA3 0.33 0.33 0.23 1.00
+
+Mean item complexity =  1
+Test of the hypothesis that 4 factors are sufficient.
+
+df null model =  36  with the objective function =  2.77 with Chi Square =  4519.61
+df of  the model are 6  and the objective function was  0.01 
+
+The root mean square of the residuals (RMSR) is  0.01 
+The df corrected root mean square of the residuals is  0.02 
+
+The harmonic n.obs is  1549 with the empirical chi square  5.81  with prob &lt;  0.45 
+The total n.obs was  1635  with Likelihood Chi Square =  18.48  with prob &lt;  0.0051 
+
+Tucker Lewis Index of factoring reliability =  0.983
+RMSEA index =  0.036  and the 90 % confidence intervals are  0.018 0.055
+BIC =  -25.92
+Fit based upon off diagonal values = 1
+Measures of factor score adequacy             
+                                                   PA1  PA2  PA4  PA3
+Correlation of (regression) scores with factors   0.91 0.90 0.86 0.83
+Multiple R square of scores with factors          0.84 0.81 0.74 0.68
+Minimum correlation of possible factor scores     0.67 0.61 0.48 0.36</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>paf_results3<span class="sc">$</span>loadings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Loadings:
+                 PA1    PA2    PA4    PA3   
+lifestyle                              0.683
+freethinking                           0.705
+obedience         0.709         0.108       
+strongleader      0.853                     
+tradition         0.675  0.113              
+socialstagnation  0.151         0.675       
+groupexclusion                  0.743       
+equalityideal            0.798              
+equalityaction           0.824              
+
+                 PA1   PA2   PA4   PA3
+SS loadings    1.720 1.352 1.028 0.974
+Proportion Var 0.191 0.150 0.114 0.108
+Cumulative Var 0.191 0.341 0.456 0.564</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>2 Factor Tucker-Lewis Index: 0.983275186153465</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2 Factor Root Mean Square Error of Approximation: 0.0356584094187782</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.diagram</span>(paf_results3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Homework1_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">alpha</span>(combined_df, <span class="at">na.rm =</span> <span class="cn">TRUE</span>,  <span class="at">check.keys=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: psych::alpha(x = combined_df, na.rm = TRUE, check.keys = TRUE)
+
+  raw_alpha std.alpha G6(smc) average_r S/N   ase mean   sd median_r
+      0.76      0.76    0.81      0.26 3.2 0.009  2.7 0.69      0.2
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt     0.74  0.76  0.78
+Duhachek  0.74  0.76  0.78
+
+ Reliability if an item is dropped:
+                 raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+lifestyle             0.76      0.76    0.80      0.29 3.2   0.0090 0.033  0.24
+freethinking          0.74      0.74    0.79      0.27 2.9   0.0098 0.037  0.19
+obedience             0.72      0.73    0.77      0.25 2.6   0.0105 0.026  0.19
+strongleader          0.72      0.72    0.77      0.25 2.6   0.0106 0.026  0.20
+tradition             0.71      0.72    0.77      0.24 2.5   0.0110 0.031  0.17
+socialstagnation      0.73      0.73    0.78      0.25 2.7   0.0102 0.030  0.20
+groupexclusion        0.74      0.74    0.78      0.26 2.8   0.0099 0.035  0.19
+equalityideal         0.75      0.75    0.78      0.27 3.0   0.0094 0.030  0.22
+equalityaction        0.76      0.75    0.78      0.28 3.1   0.0091 0.028  0.23
+
+ Item statistics 
+                    n raw.r std.r r.cor r.drop mean  sd
+lifestyle        1556  0.45  0.46  0.34   0.28  2.3 1.2
+freethinking     1553  0.55  0.57  0.48   0.42  2.4 1.1
+obedience        1553  0.66  0.66  0.62   0.53  2.9 1.2
+strongleader     1548  0.67  0.66  0.63   0.53  3.1 1.3
+tradition        1554  0.71  0.70  0.67   0.59  3.3 1.2
+socialstagnation 1553  0.62  0.63  0.57   0.49  2.5 1.1
+groupexclusion   1556  0.57  0.59  0.51   0.44  2.2 1.0
+equalityideal    1553  0.52  0.52  0.47   0.37  2.8 1.2
+equalityaction   1555  0.51  0.50  0.44   0.33  2.8 1.3
+
+Non missing response frequency for each item
+                    1    2    3    4    5 miss
+lifestyle        0.30 0.37 0.18 0.09 0.07 0.05
+freethinking     0.19 0.38 0.27 0.10 0.05 0.05
+obedience        0.17 0.21 0.30 0.23 0.09 0.05
+strongleader     0.16 0.14 0.30 0.24 0.16 0.05
+tradition        0.10 0.16 0.26 0.32 0.17 0.05
+socialstagnation 0.27 0.13 0.44 0.11 0.05 0.05
+groupexclusion   0.33 0.20 0.39 0.06 0.01 0.05
+equalityideal    0.15 0.25 0.36 0.14 0.09 0.05
+equalityaction   0.17 0.29 0.23 0.16 0.15 0.05</code></pre>
+</div>
+</div>
+<p>Indeed four factors results in the best model, although the eigenvalue value of PA3 appears to be slightly below the threshold of 1. Despite this four factors appears to be the best based on the scree plot, the highest TLI and highest RMSEA value. Additionally the TLI is above the 0.95 threshold of being accurate. Furthermore the latent variables grouped to the factors seem to make logical conceptual sense in this model. Conceptually we could name the factors or latent concepts as follows: - PA1: Strong Leaders (1.72 Eigenvalue) - PA2: Social Equality (1.35 Eigenvalue) - PA3: Independence (0.974 Eigenvalue) - PA4: Tribalism (1.03 Eigenvalue) As a result of both factor analysis and using alpha levels both the RWA and SD scales appear to have multiple dimensions. This claim is somewhat supported by the alpha analysis above which demonstrates that combining both metrics together actually results in a higher alpha score than either separately indicating that both scales do measure the same concepts just different dimensions. Assuming this then and taking into account that there are four latent concepts in the best model, this supports the multiple dimension conclusion.</p>
+<p>“lifestyle” = C5_U1 “freethinking” = C5_U2 “obedience” = C5_U3 “strongleader” = C5_U4 “tradition” = C5_U5 “socialstagnation” = C5_T1 “groupexclusion” = C5_T2 “equalityideal” = C5_T3 “equalityaction” = C5_T4</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>anes <span class="ot">&lt;-</span> anes <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(C5_T1, C5_T2, C5_U3, C5_U4, C5_U5), flip_scale))</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>anes <span class="ot">&lt;-</span> anes <span class="sc">%&gt;%</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">strong_leaders =</span> (C5_U4 <span class="sc">+</span> C5_U3 <span class="sc">+</span> C5_U5) <span class="sc">/</span> <span class="dv">3</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">social_equality =</span> (C5_T3 <span class="sc">+</span> C5_T4) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">independece =</span> (C5_U2 <span class="sc">+</span> C5_U1) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">tribalism =</span> (C5_T1 <span class="sc">+</span> C5_T2) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

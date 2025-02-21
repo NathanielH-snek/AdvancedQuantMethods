@@ -1,0 +1,219 @@
+---
+title: "790Q Assignment 1"
+format: html
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(haven)
+library(Hmisc)
+library(descr)
+library(survey)
+library(janitor)
+library(psych)
+library(glue)
+library(stargazer)
+library(broom)
+library(psychTools)
+```
+
+```{r}
+rm(list=ls())
+anes_raw <- read_dta('~/Documents/School/790Q/Homeworks/FactorAnalysis/Data/anes_panel_2013_inetrecontact.dta')
+
+anes <- anes_raw %>%
+  mutate(across(c(C5_T1, C5_T2, C5_T3, C5_T4, C5_U1, C5_U2, C5_U3, C5_U4, C5_U5), ~ ifelse(. < 0, NA, .)))
+```
+
+```{r}
+anes_soc_dom <- anes %>%
+  dplyr::select(
+    C5_T1,
+    C5_T2,
+    C5_T3,
+    C5_T4
+  )
+
+anes_rwa <- anes %>%
+  dplyr::select(
+    C5_U1,
+    C5_U2,
+    C5_U3,
+    C5_U4,
+    C5_U5
+  )
+```
+
+```{r}
+flip_scale <- function(column) {
+  max_val = max(column, na.rm = T)
+  add = max_val + 1
+  return(column*-1 + add)
+}
+```
+
+```{r}
+#Test function
+test <- flip_scale(anes_soc_dom$C5_T1)
+CrossTable(
+  anes_soc_dom$C5_T1, 
+  test, 
+  expected = FALSE, 
+  chisq=FALSE,  
+  prop.c=TRUE, 
+  prop.r=FALSE, 
+  prop.t=FALSE, 
+  prop.chisq = FALSE
+  )
+```
+
+```{r}
+anes_soc_dom <- anes_soc_dom %>%
+  dplyr::mutate(across(c(C5_T1, C5_T2), flip_scale))
+
+anes_rwa <- anes_rwa %>%
+  dplyr::mutate(across(c(C5_U3, C5_U4, C5_U5), flip_scale))
+```
+
+```{r}
+soc_dom_alpha <- psych::alpha(anes_soc_dom, na.rm = TRUE,  check.keys=TRUE)
+soc_dom_alpha
+```
+
+For the scale related to social dominance we see a reported alpha of 0.63. This is lower than the .7 value of the Kaiser Criterion indicating this measure is generally not reliable. It looks like question T1 is the least effective, as dropping it would decrease the alpha only slightly (0.62) whereas removing any of the other questions would reduce the alpha in a substantively significant (resulting in a 0.55 - 0.51 alpha) amount. Since removing any of the question would reduce the alpha score however all should be kept in regards to this current interation and perhaps more should be added or the questions should be reworked.
+
+```{r}
+rwa_alpha <- psych::alpha(anes_rwa, na.rm = TRUE,  check.keys=TRUE)
+rwa_alpha
+```
+
+The resulting alpha form the right wing authoritarianism scale does result in a reliable alpha score of 0.72. Interestingly removing the question U1 would result in an increase of the alpha score to 0.73. This may indicate that this question should be removed. Other question removals would reduce the alpha score substantially particularly U5 (0.63) U4 and U3 (0.64 respectively). Notably the three questions that appear to be the most critical to the reliability of this scale are all reverse coded.
+
+```{r}
+combined_df <- bind_cols(anes_rwa, anes_soc_dom)
+paf_results <- fa(
+  combined_df,
+  nfactors = 2,
+  rotate = "oblimin",
+  fm="pa"
+)
+paf_results
+```
+
+```{r}
+paf_results$loadings
+```
+
+```{r}
+glue("2 Factor Tucker-Lewis Index: {paf_results$TLI}")
+glue("2 Factor Root Mean Square Error of Approximation: {paf_results$RMSEA['RMSEA']}")
+```
+
+```{r}
+fa.diagram(paf_results)
+```
+
+Here I've elected to use PAF with oblique rotation. I think finding latent factors is a better choice here than dimension reduction, particularly since the social dominance scale doesn't appear to be very reliable. For rotation I've elected to use oblique since if we really are measuring two factors, I would expect right wing authoritarianism and social dominance to be correlated. Using the provided parameter of 2 factors to start there is an interesting mix of questions of the two scales on loading to each factor. Notably C5_U1, C5_U2, and C5_T2 all have fairly low loading and the Tucker-Lewis Index (TLI) and Root Mean Square Error of Approximation (RMSEA) are both well below the desired thresholds of \>0.95 and \>0.5 respectively.
+
+```{r}
+scree(combined_df)
+```
+
+After plotting a scree plot 3 or 4 factors may be ideal. Let's try 3 factors.
+
+```{r}
+combined_df <- bind_cols(anes_rwa, anes_soc_dom)
+colnames(combined_df) <- c(
+  "lifestyle", #C5_U1
+  "freethinking", #C5_U2
+  "obedience", #C5_U3
+  "strongleader", #C5_U4
+  "tradition", #C5_U5
+  "socialstagnation", #C5_T1
+  "groupexclusion", #C5_T2
+  "equalityideal", #C5_T3
+  "equalityaction" #C5_T4
+)
+paf_results2 <- fa(
+  combined_df,
+  nfactors = 3,
+  rotate = "oblimin",
+  fm="pa"
+)
+paf_results2
+```
+
+```{r}
+paf_results2$loadings
+```
+
+```{r}
+#| echo: false
+glue("2 Factor Tucker-Lewis Index: {paf_results2$TLI}")
+glue("2 Factor Root Mean Square Error of Approximation: {paf_results2$RMSEA['RMSEA']}")
+```
+
+```{r}
+fa.diagram(paf_results2)
+```
+
+Not every appealing results likely 4 factors will be ideal. 
+```{r}
+paf_results3 <- fa(
+  combined_df,
+  nfactors = 4,
+  rotate = "oblimin",
+  fm="pa"
+)
+paf_results3
+```
+
+```{r}
+paf_results3$loadings
+```
+
+```{r}
+#| echo: false
+glue("2 Factor Tucker-Lewis Index: {paf_results3$TLI}")
+glue("2 Factor Root Mean Square Error of Approximation: {paf_results3$RMSEA['RMSEA']}")
+```
+
+```{r}
+fa.diagram(paf_results3)
+```
+
+```{r}
+psych::alpha(combined_df, na.rm = TRUE,  check.keys=TRUE)
+```
+
+Indeed four factors results in the best model, although the eigenvalue value of PA3 appears to be slightly below the threshold of 1. Despite this four factors appears to be the best based on the scree plot, the highest TLI and highest RMSEA value. Additionally the TLI is above the 0.95 threshold of being accurate. Furthermore the latent variables grouped to the factors seem to make logical conceptual sense in this model. Conceptually we could name the factors or latent concepts as follows:
+- PA1: Strong Leaders (1.72 Eigenvalue)
+- PA2: Social Equality (1.35 Eigenvalue)
+- PA3: Independence (0.974 Eigenvalue)
+- PA4: Tribalism (1.03 Eigenvalue)
+As a result of both factor analysis and using alpha levels both the RWA and SD scales appear to have multiple dimensions. This claim is somewhat supported by the alpha analysis above which demonstrates that combining both metrics together actually results in a higher alpha score than either separately indicating that both scales do measure the same concepts just different dimensions. Assuming this then and taking into account that there are four latent concepts in the best model, this supports the multiple dimension conclusion.  
+
+"lifestyle" = C5_U1 
+"freethinking" = C5_U2 
+"obedience" = C5_U3
+"strongleader" = C5_U4
+"tradition" = C5_U5 
+"socialstagnation" = C5_T1
+"groupexclusion" = C5_T2
+"equalityideal" = C5_T3
+"equalityaction" = C5_T4
+
+```{r}
+anes <- anes %>%
+  dplyr::mutate(across(c(C5_T1, C5_T2, C5_U3, C5_U4, C5_U5), flip_scale))
+
+
+anes <- anes %>%
+  mutate(
+    strong_leaders = (C5_U4 + C5_U3 + C5_U5) / 3,
+    social_equality = (C5_T3 + C5_T4) / 2,
+    independece = (C5_U2 + C5_U1) / 2,
+    tribalism = (C5_T1 + C5_T2) / 2
+  )
+```
+
